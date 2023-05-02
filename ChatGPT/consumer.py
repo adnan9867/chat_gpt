@@ -49,4 +49,4 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 {"role": "user", "content": self.message}
             ]
         )
-        return response.choices[0].message
+        return response.choices[0].message['content']
