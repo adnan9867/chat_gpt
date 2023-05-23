@@ -57,11 +57,12 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'ChatGPT.urls'
+TEMP_DIR = os.path.join(BASE_DIR, "Templates")
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMP_DIR],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
