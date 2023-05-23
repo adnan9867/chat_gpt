@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Deployment Instructions</title>
+    <style>
+        /* Add styles for code block */
+        pre {
+            background-color: #000;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+
+        /* Add styles for copy button */
+        .copy-button {
+            background-color: #ddd;
+            border: none;
+            color: black;
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Deployment Instructions</h1>
+
+    <h2>Install Node.js, npm, and pm2</h2>
+    <pre>
+        <code>
+            sudo apt install nodejs
+            sudo apt install npm
+            npm install pm2 -g
+        </code>
+    </pre>
+
+    <h2>Install Python Venv and Activate</h2>
+    <pre>
+        <code>
+            sudo apt install python3.10-venv
+            source venv/bin/activate
+        </code>
+    </pre>
+
+    <h2>Clone Your Project</h2>
+    <pre>
+        <code>
+            git clone https://username:personal_token@github.com/username/repo.git
+        </code>
+    </pre>
+
+    <h2>Install Requirements</h2>
+    <pre>
+        <code>
+            pip3 install -r requirements.txt
+        </code>
+    </pre>
+
+    <h2>Install Postgres</h2>
+    <pre>
+        <code>
+            sudo apt update
+            sudo apt install postgresql postgresql-contrib
+            sudo systemctl start postgresql.service
+        </code>
+    </pre>
+
+    <h2>Setup Database</h2>
+    <pre>
+        <code>
+            sudo -u postgres psql
+            create database mydb;
+            create user myuser with encrypted password 'mypass';
+            grant all privileges on database mydb to myuser;
+        </code>
+    </pre>
+
+    <h2>Run Gunicorn Server Using PM2 (WSGI)</h2>
+    <pre>
+        <code>
+            cd project_directory
+            pm2 --name=api-server start 'gunicorn project_name.wsgi --workers 9 --worker-class gevent --bind 0.0.0.0:8000'
+        </code>
+    </pre>
+
+    <h2>Check Status</h2>
+    <pre>
+        <code>
+            pm2 status
+        </code>
+    </pre>
+
+    <h2>Check Logs</h2>
+    <pre>
+        <code>
+            pm2 logs
+        </code>
+    </pre>
+
+    <h2>Run Daphne Server Using PM2 (ASGI)</h2>
+    <pre>
+        <code></code>
+            cd project_directory
+            pm2 --name=api-server start 'daphne -b 0.0.0.0 -p 8000 Project_name.asgi:application'
+    </pre>
+
+    <h2>Start NGINX Without SSL</h2>
+    <pre>
+        <code>
+            sudo nano /etc/nginx/sites-available/file_name
+
+            upstream server_name {
+            server 127.0.0.1:8000;
+            }
+
+            server {
+                listen 80;
+                server_name your_ip_here;
+
+                location /static/ {
+                    alias /root/seina_ai/static;
+                }
+
+                location / {
+                    proxy_pass http://server_name;
+                    proxy_http_version 1.1;
+                    proxy_set_header Upgrade $http_upgrade;
+                    proxy_set_header Connection "Upgrade";
+                    proxy_set_header Host $host;
+                    proxy_set_header X-Real-IP $remote_addr;
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header X-Forwarded-Proto $scheme;
+                }
+            }
+        </code>
+    </pre>
+
+    <h2>Test NGINX</h2>
+    <pre>
+       <code>
+            sudo ln -s /etc/nginx/sites-available/file_name /etc/nginx/sites-enabled/
+            sudo systemctl restart nginx
+            nginx -t
+       </code>
+    </pre>
+
+    <h2>To Implement SSL, Install the Following Packages</h2>
+    <pre>
+        <code>
+            sudo apt update
+            sudo apt install certbot python3-certbot-nginx
+        </code>
+    </pre>
+
+    <h2>Obtain SSL Certificate</h2>
+    <pre>
+        <code>
+            sudo certbot --nginx -d your-domain.com -d www.your-domain.com
+        </code>
+    </pre>
+
+    <h2>Create NGINX File with SSL</h2>
+    <pre>
+        <code>
+            sudo nano /etc/nginx/sites-available/file_name
+
+            upstream your_server {
+                server 127.0.0.1:8000;
+            }
+
+            server {
+                listen 80;
+                server_name your-domain.com www.your-domain.com;
+                return 301 https://$host$request_uri;
+            }
+
+            server {
+                listen 443 ssl;
+                server_name your-domain.com www.your-domain.com;
+
+                ssl_certificate /etc/letsencrypt/live/your-domain.com/fullchain.pem;
+                ssl_certificate_key /etc/letsencrypt/live/your-domain.com/privkey.pem;
+
+                location /static/ {
+                    alias /path/to/static/files;
+                }
+
+                location / {
+                    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+                    proxy_set_header Host $host;
+                    proxy_redirect off;
+                    proxy_pass http://your_server;
+                }
+            }
+        </code>
+    </pre>
+
+    <h2>Test NGINX</h2>
+    <pre>
+        <code>
+            sudo ln -s /etc/nginx/sites-available/file_name /etc/nginx/sites-enabled/
+            sudo systemctl restart nginx
+            nginx -t
+        </code>
+    </pre>
+</body>
+</html>

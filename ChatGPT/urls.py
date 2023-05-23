@@ -17,10 +17,12 @@ from django.contrib import admin
 from django.urls import path
 
 from ChatGPT.routing import websocket_urlpatterns
-from .views import PrivacyPolicyView
+from .views import PrivacyPolicyView, DeployDjangoView
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('talk_bot_privacy_policy/', PrivacyPolicyView.as_view(), name='privacy_policy'),
+    path('deploy_django_using_pm2/', DeployDjangoView.as_view(), name='privacy_policy'),
 ]
 
 urlpatterns += websocket_urlpatterns
