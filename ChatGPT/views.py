@@ -17,4 +17,6 @@ class TestViewSet(ModelViewSet):
     serializer_class = None
 
     def list(self, request, *args, **kwargs):
+        print(request)
+        print('request hit')
         return Response({'message': 'Hello World'})
