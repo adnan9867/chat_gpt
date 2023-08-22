@@ -2,6 +2,8 @@ from django.views.generic import TemplateView
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from gpt_models.models import TestModel
+
 
 class PrivacyPolicyView(TemplateView):
     template_name = 'privacy_policy.html'
@@ -19,4 +21,5 @@ class TestViewSet(ModelViewSet):
     def list(self, request, *args, **kwargs):
         print(request)
         print('request hit')
+        TestModel.objects.create(request=request.META)
         return Response({'message': 'Hello World'})

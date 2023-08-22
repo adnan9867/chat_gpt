@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "daphne",
     'django.contrib.staticfiles',
     'rest_framework',
+    'gpt_models'
 
 ]
 
