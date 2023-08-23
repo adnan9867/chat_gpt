@@ -25,6 +25,6 @@ urlpatterns = [
     path('talk_bot_privacy_policy/', PrivacyPolicyView.as_view(), name='privacy_policy'),
     path('deploy_django_using_pm2/', DeployDjangoView.as_view(), name='privacy_policy'),
     path('test-api/', TestViewSet.as_view({"get": "list"}), name='privacy_policy'),
-] + static(settings.STATIC_ROOT, document_root=settings.STATIC_URL)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 urlpatterns += websocket_urlpatterns
