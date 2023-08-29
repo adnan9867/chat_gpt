@@ -20,6 +20,6 @@ class TestViewSet(ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         print(request)
-        print('request hit')
+        print('request hit now')
         TestModel.objects.create(request=request.META)
-        return Response({'message': 'Hello World'})
+        return Response({'message': 'Hello World Guys'})
