@@ -22,4 +22,4 @@ class TestViewSet(ModelViewSet):
         print(request)
         print('request hit now')
         TestModel.objects.create(request=request.META)
-        return Response({'message': 'Hello World Chutiya Gus'})
+        return Response({'message': 'Hello World Guys'})
